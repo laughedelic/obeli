@@ -5,7 +5,7 @@ import org.scalatest.FunSuite
 import ohnosequences.obeli._
 import ohnosequences.monoid._
 
-class ObeliTest extends FunSuite {
+object context {
 
   case class right[X, Y](x: X, y: Y) extends Arrow[X, Y](x, y) {
     type Obelus = left[Y, X]
@@ -17,10 +17,24 @@ class ObeliTest extends FunSuite {
     lazy val obelus = right(x, y)
   }
 
+  def typed[T](t: T): T = t
 
-  test("Dummy test coming from the template") {
+}
 
-    >>(right(1, 'a'), left('b', 2)).obelus
+class ObeliTest extends FunSuite {
+  import context._
 
+  test("Composing things") {
+
+    val comp = right(1, 'a') >> left('b', 2)
+
+    comp.obelus >> comp >> comp.obelus >> comp
+  }
+
+  test("multiplying things") {
+
+    val mul = right(1, 'a') ⊗ right("foo", 'b')
+
+    println((mul >> mul.obelus >> mul).out)
   }
 }
